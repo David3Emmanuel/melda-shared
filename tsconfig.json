@@ -13,5 +13,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["**/*.check.ts", "dist", "node_modules"]
+  "exclude": ["**/*.check.ts", "src/ui", "dist", "node_modules"]
 }

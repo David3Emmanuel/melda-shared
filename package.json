@@ -1,6 +1,6 @@
 {
   "name": "melda-shared",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared domain models, insight aggregation, experience grading, the AI service interface, the deterministic demo seed, and the REST contract for MELDA.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -9,6 +9,16 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./ui/tokens": {
+      "types": "./src/ui/tokens.ts",
+      "react-native": "./src/ui/tokens.ts",
+      "default": "./src/ui/tokens.ts"
+    },
+    "./ui/components": {
+      "types": "./src/ui/components.tsx",
+      "react-native": "./src/ui/components.tsx",
+      "default": "./src/ui/components.tsx"
     }
   },
   "files": [
@@ -21,12 +31,33 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check:insights": "tsx src/domain/insights/insights.check.ts",
     "check:experience": "tsx src/domain/experience.check.ts",
-    "check": "pnpm check:insights && pnpm check:experience",
+    "check:ui": "tsx src/ui/tokens.check.ts",
+    "check": "pnpm check:insights && pnpm check:experience && pnpm check:ui",
     "format": "prettier --write ."
   },
   "devDependencies": {
     "prettier": "^3.9.6",
     "tsx": "^4.23.12",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@expo/vector-icons": ">=15",
+    "react": ">=19",
+    "react-native": ">=0.81",
+    "react-native-safe-area-context": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "@expo/vector-icons": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
+      "optional": true
+    }
   }
 }
