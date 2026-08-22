@@ -5,11 +5,11 @@
 //
 // This and ./tokens are the shared design system, imported by both apps via the
 // `melda-shared/ui/components` and `melda-shared/ui/tokens` subpaths. They ship
-// as SOURCE, not compiled into dist: this file pulls in react-native and
-// @expo/vector-icons (which only the apps have), so src/ui is excluded from the
-// pure `tsc` build and the backend, which imports only the bare `melda-shared`
-// root, never loads it. Each app's Metro bundler transpiles this .tsx the same
-// way it does the app's own screens, so no build step is needed here.
+// as SOURCE, not compiled into dist: this file pulls in react-native,
+// react-native-svg and ./icons (which only the apps have), so src/ui is excluded
+// from the pure `tsc` build and the backend, which imports only the bare
+// `melda-shared` root, never loads it. Each app's Metro bundler transpiles this
+// .tsx the same way it does the app's own screens, so no build step is needed here.
 
 import { type ReactNode, useCallback, useState } from 'react';
 import {
@@ -26,9 +26,9 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Feather from '@expo/vector-icons/Feather';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { SvgXml } from 'react-native-svg';
 import { color, font, radius, sp, type Tone, toneStyle, weight } from './tokens';
+import { EMPTY_STATE_XML, ICON_XML, type EmptyStateArt, type IconName } from './icons';
 
 // react-native-web adds `hovered`/`focused` to the Pressable state at runtime,
 // but React Native's own type only declares `pressed`. Widen it here so screens
@@ -36,35 +36,16 @@ import { color, font, radius, sp, type Tone, toneStyle, weight } from './tokens'
 export type PressState = { pressed: boolean; hovered?: boolean; focused?: boolean };
 
 // --- icons -------------------------------------------------------------------
-// Screens name icons by role, not glyph, so the set lives in one place. Feather
-// covers the UI chrome; `sparkle` is the MELDA/AI accent Feather lacks, so it
-// comes from Ionicons. Both ship with @expo/vector-icons and render as vectors on
-// web. A bad Feather name is a compile error (name is a strict union), so this map
-// is checked by `pnpm typecheck`.
-const FEATHER_ICONS = {
-  chart: 'bar-chart-2',
-  book: 'book-open',
-  reviews: 'file-text',
-  pencil: 'edit-3',
-  check: 'check',
-  success: 'check-circle',
-  plus: 'plus',
-  next: 'arrow-right',
-  refresh: 'rotate-ccw',
-  alert: 'alert-triangle',
-  inbox: 'inbox',
-  signal: 'radio',
-  question: 'help-circle',
-  home: 'home',
-  bookmark: 'bookmark',
-} as const;
-
-export type IconName = keyof typeof FEATHER_ICONS | 'sparkle';
+// Screens name icons by role, not glyph; the per-glyph SVG set lives in ./icons
+// and renders through react-native-svg (no icon font, so web first paint never
+// flashes blank glyphs). `#1439FF` in each asset is the swappable brand accent
+// the Icon component rewrites to the requested colour at render time.
+export type { IconName, EmptyStateArt };
 
 export function Icon(props: { name: IconName; size?: number; color?: string }) {
   const { name, size = 18, color: c = color.ink } = props;
-  if (name === 'sparkle') return <Ionicons name="sparkles" size={size} color={c} />;
-  return <Feather name={FEATHER_ICONS[name]} size={size} color={c} />;
+  const xml = ICON_XML[name].replace(/#1439FF/g, c);
+  return <SvgXml xml={xml} width={size} height={size} />;
 }
 
 // --- text --------------------------------------------------------------------
@@ -529,16 +510,28 @@ export function Loading(props: { label?: string }) {
 }
 
 // --- empty state -------------------------------------------------------------
-export function EmptyState(props: { title: string; body?: string; icon?: IconName }) {
+export function EmptyState(props: {
+  title: string;
+  body?: string;
+  /** One of the six illustrations in ./icons (single-fill brand accent). */
+  art?: EmptyStateArt;
+  /** Fallback glyph (the new brand icon set) for states without bespoke art. */
+  icon?: IconName;
+}) {
+  const { title, body, art, icon } = props;
   return (
     <View style={styles.empty}>
-      {props.icon ? <Icon name={props.icon} size={40} color={color.inkMuted} /> : null}
+      {art ? (
+        <SvgXml xml={EMPTY_STATE_XML[art]} width={120} height={120} />
+      ) : icon ? (
+        <Icon name={icon} size={40} color={color.inkMuted} />
+      ) : null}
       <Txt variant="h3" center>
-        {props.title}
+        {title}
       </Txt>
-      {props.body ? (
+      {body ? (
         <Txt variant="small" c={color.inkMuted} center>
-          {props.body}
+          {body}
         </Txt>
       ) : null}
     </View>
@@ -553,7 +546,7 @@ export function ErrorState(props: { title?: string; message?: string; onRetry?: 
   const { title = 'Something went wrong', message, onRetry } = props;
   return (
     <View style={styles.empty}>
-      <Icon name="alert" size={40} color={color.warnInk} />
+      <SvgXml xml={EMPTY_STATE_XML.error.replace(/#1439FF/g, color.warnInk)} width={72} height={72} />
       <Txt variant="h3" center>
         {title}
       </Txt>
