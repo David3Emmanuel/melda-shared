@@ -43,7 +43,13 @@ export type LessonStatus = 'draft' | 'published';
  * a concept is not landing. Attached to the lesson it came from.
  */
 export type AdaptationMode =
-  'simpler' | 'detailed' | 'example' | 'visual' | 'practice' | 'reexplain';
+  | 'simpler'
+  | 'detailed'
+  | 'example'
+  | 'visual'
+  | 'practice'
+  | 'reexplain'
+  | 'custom';
 
 export interface Adaptation {
   id: ID;

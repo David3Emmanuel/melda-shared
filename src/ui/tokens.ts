@@ -131,6 +131,7 @@ export const adaptationLabel: Record<string, string> = {
   visual: 'Visual',
   practice: 'Practice',
   reexplain: 'Re-explained',
+  custom: 'Custom',
 };
 
 /**

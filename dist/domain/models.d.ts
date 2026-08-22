@@ -26,7 +26,7 @@ export type LessonStatus = 'draft' | 'published';
  * A teacher-authored adaptation of a section, produced by the AI service when
  * a concept is not landing. Attached to the lesson it came from.
  */
-export type AdaptationMode = 'simpler' | 'detailed' | 'example' | 'visual' | 'practice' | 'reexplain';
+export type AdaptationMode = 'simpler' | 'detailed' | 'example' | 'visual' | 'practice' | 'reexplain' | 'custom';
 export interface Adaptation {
     id: ID;
     sectionId: ID;

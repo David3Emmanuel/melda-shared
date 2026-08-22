@@ -35,6 +35,11 @@ export interface AdaptSectionInput {
     sectionTitle: string;
     originalBody: string;
     mode: AdaptationMode;
+    /**
+     * The teacher's own instruction for a `custom` adaptation (e.g. "use basketball
+     * metaphors"). Ignored unless `mode === 'custom'`.
+     */
+    customInstruction?: string;
     /** How many students struggled, passed through so the copy can reference it. */
     strugglePct?: number;
     /**
