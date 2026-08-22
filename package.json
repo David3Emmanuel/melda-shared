@@ -1,6 +1,6 @@
 {
   "name": "melda-shared",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Shared domain models, insight aggregation, experience grading, the AI service interface, the deterministic demo seed, and the REST contract for MELDA.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -27,7 +27,6 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepare": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check:insights": "tsx src/domain/insights/insights.check.ts",
     "check:experience": "tsx src/domain/experience.check.ts",
