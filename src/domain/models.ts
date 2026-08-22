@@ -63,6 +63,13 @@ export interface Adaptation {
 export interface Lesson {
   id: ID;
   title: string;
+  /** The teacher-typed topic this lesson teaches, kept so a linked review can
+   *  default its topic to the lesson's subject. Present on lessons authored from
+   *  the AI flow; falls back to `title` for display when absent. */
+  topic?: string;
+  /** Grade level the lesson was authored for (e.g. "Grade 10"), so a linked
+   *  review can default its grade. Optional: older/demo lessons may omit it. */
+  gradeLevel?: string;
   summary: string;
   conceptIds: ID[];
   sections: LessonSection[];

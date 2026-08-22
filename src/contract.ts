@@ -108,6 +108,7 @@ export interface CreateLessonSection {
 /** POST /classes/:id/lessons. The server resolves `topic` to a real Concept. */
 export interface CreateLessonRequest {
   topic: string;
+  gradeLevel?: string;
   title: string;
   summary: string;
   sections: CreateLessonSection[];
