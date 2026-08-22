@@ -14,7 +14,15 @@
 //     signals are only ever appended.
 
 import { STRUGGLE_THRESHOLD } from './insights/aggregate';
-import type { Answer, Assignment, Dataset, LearningSignal, Student, Submission } from './models';
+import type {
+  Answer,
+  Assignment,
+  Concept,
+  Dataset,
+  LearningSignal,
+  Student,
+  Submission,
+} from './models';
 
 /** questionId -> chosen choice index. A missing entry means an unanswered question. */
 export type Selections = Record<string, number>;
@@ -115,6 +123,17 @@ export function upsertSubmission(submissions: Submission[], sub: Submission): Su
     (s) => !(s.assignmentId === sub.assignmentId && s.studentId === sub.studentId),
   );
   return [sub, ...rest];
+}
+
+/**
+ * Names of the concepts (in teaching order) a submission answered wrong - the
+ * "what to re-study" hint a student sees after a quiz, without exposing which
+ * answer was which. Answers carry a denormalised conceptId, so no re-join is
+ * needed; concepts the submission never touched (or no longer exist) drop out.
+ */
+export function missedTopicNames(concepts: Concept[], submission: Submission): string[] {
+  const missed = new Set(submission.answers.filter((a) => !a.correct).map((a) => a.conceptId));
+  return concepts.filter((c) => missed.has(c.id)).map((c) => c.name);
 }
 
 // --- live tracking -----------------------------------------------------------

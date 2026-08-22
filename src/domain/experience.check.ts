@@ -14,6 +14,7 @@ import { conceptInsights } from './insights/aggregate';
 import {
   assignmentProgress,
   buildSubmission,
+  missedTopicNames,
   upsertSubmission,
   type Selections,
 } from './experience';
@@ -143,6 +144,27 @@ check('assignmentProgress tallies the roster and the class average for a review'
   );
 
   eq(assignmentProgress(dataset, 'nope'), null, 'unknown assignment id is null');
+});
+
+check('missedTopicNames lists the wrong-answer concepts in teaching order, key never leaks', () => {
+  const perfectSub = buildSubmission(assignment, 's-test', perfect, 'T', 'sub-T').submission;
+  eq(missedTopicNames(dataset.concepts, perfectSub).length, 0, 'a perfect paper misses nothing');
+
+  const wrongSub = buildSubmission(assignment, 's-test', seedStruggler, 'T', 'sub-T').submission;
+  const topics = missedTopicNames(dataset.concepts, wrongSub);
+  ok(topics.length > 0, 'a partial paper names topics to review');
+
+  // The names are exactly the concepts with at least one wrong answer, in the
+  // dataset's teaching order - and nothing else (no prompts, no choices).
+  const missedIds = new Set(wrongSub.answers.filter((a) => !a.correct).map((a) => a.conceptId));
+  const expected = dataset.concepts.filter((c) => missedIds.has(c.id)).map((c) => c.name);
+  eq(JSON.stringify(topics), JSON.stringify(expected), 'teaching order, wrong concepts only');
+  for (const t of topics) {
+    ok(
+      !assignment.questions.some((q) => q.prompt === t || q.choices?.includes(t)),
+      'no question prompt or choice text appears as a topic',
+    );
+  }
 });
 
 console.log(`\n${checks} experience checks passed.`);

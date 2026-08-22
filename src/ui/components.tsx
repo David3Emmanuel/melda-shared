@@ -20,6 +20,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  type TextInputProps,
   type TextStyle,
   View,
   type ViewStyle,
@@ -87,10 +88,14 @@ export function Txt(props: {
   center?: boolean;
   style?: TextStyle;
   numberOfLines?: number;
+  /** Element id (id= on web) so an aria-labelledby can point at this text. */
+  nativeID?: string;
 }) {
-  const { children, variant = 'body', c = color.ink, w, center, style, numberOfLines } = props;
+  const { children, variant = 'body', c = color.ink, w, center, style, numberOfLines, nativeID } =
+    props;
   return (
     <Text
+      nativeID={nativeID}
       numberOfLines={numberOfLines}
       style={[
         VARIANT[variant],
@@ -228,16 +233,27 @@ export function Divider() {
 
 // --- text input --------------------------------------------------------------
 // One field for every form in the app: an optional uppercase label above a
-// bordered input, single- or multi-line. Editable AI drafts and the topic/param
-// fields all render through this, so the input styling lives in one place.
+// bordered input, single- or multi-line. Editable AI drafts, the topic/param
+// fields and both login forms all render through this, so the input styling and
+// the form props (secure entry, autofill hints, keyboard type) live in one place.
 export function Input(props: {
   value: string;
   onChangeText: (text: string) => void;
   label?: string;
   placeholder?: string;
   multiline?: boolean;
-  keyboardType?: 'default' | 'number-pad';
+  keyboardType?: TextInputProps['keyboardType'];
+  secureTextEntry?: boolean;
+  autoCapitalize?: TextInputProps['autoCapitalize'];
+  autoCorrect?: boolean;
+  /** Autofill hint (web + native): "email", "current-password", "name"... */
+  autoComplete?: TextInputProps['autoComplete'];
+  /** iOS autofill hint, e.g. "emailAddress", "password". */
+  textContentType?: TextInputProps['textContentType'];
+  editable?: boolean;
   onSubmitEditing?: () => void;
+  /** Element id (id= on web) so an aria-labelledby can name the field. */
+  nativeID?: string;
   style?: ViewStyle;
 }) {
   const {
@@ -247,7 +263,14 @@ export function Input(props: {
     placeholder,
     multiline,
     keyboardType,
+    secureTextEntry,
+    autoCapitalize,
+    autoCorrect,
+    autoComplete,
+    textContentType,
+    editable,
     onSubmitEditing,
+    nativeID,
     style,
   } = props;
   return (
@@ -269,8 +292,15 @@ export function Input(props: {
         placeholderTextColor={color.inkMuted}
         multiline={multiline}
         keyboardType={keyboardType}
+        secureTextEntry={secureTextEntry}
+        autoCapitalize={autoCapitalize}
+        autoCorrect={autoCorrect}
+        autoComplete={autoComplete}
+        textContentType={textContentType}
+        editable={editable}
         returnKeyType={onSubmitEditing ? 'done' : undefined}
         onSubmitEditing={onSubmitEditing}
+        nativeID={nativeID}
         accessibilityLabel={label ?? placeholder}
         style={[styles.input, multiline ? styles.inputMultiline : null]}
       />
@@ -548,11 +578,11 @@ const styles = StyleSheet.create({
     padding: sp.lg,
     borderWidth: 1,
     borderColor: color.border,
-    shadowColor: '#0B1220',
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 1,
+    // boxShadow replaces the deprecated shadow* props / elevation: it renders on
+    // react-native-web and on new-architecture native (both apps run
+    // newArchEnabled). ponytail: if an app ever turns the new arch off, Android
+    // loses the shadow and needs `elevation` back.
+    boxShadow: '0px 3px 10px rgba(11, 18, 32, 0.05)',
   },
   pressed: { opacity: 0.7 },
   // Web-only affordances (react-native-web): a light dim on hover and a keyboard

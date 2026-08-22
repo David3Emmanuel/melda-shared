@@ -72,6 +72,8 @@ export interface InsightsResponse {
   summary: ClassSummary;
   concepts: ConceptInsight[];
   studentsByNeed: StudentNeed[];
+  /** Server-authoritative class average: the mean of each student's overall mastery. */
+  avgMasteryPct: number;
   narration: string;
 }
 
@@ -127,11 +129,31 @@ export interface StudentAssignment {
   submitted: boolean;
   /** The student's own score, or null before they submit. Never anyone else's. */
   scorePct: number | null;
+  /**
+   * Names of the concepts (teaching order) this student answered wrong, computed
+   * server-side from their own submission. Present once submitted; empty when
+   * everything was right. Never leaks the answer key.
+   */
+  topicsToReview?: string[];
+}
+
+/** A lesson with the current student's saved-state, returned by GET /lessons/:id. */
+export interface StudentLesson extends Lesson {
+  /** Whether this student has bookmarked the lesson. */
+  saved: boolean;
 }
 
 /** POST /assignments/:id/submissions - the server grades via buildSubmission. */
 export interface SubmitAssignmentRequest {
   selections: Selections;
+}
+
+/** The graded result of a submission: score plus which topics to re-study. */
+export interface SubmitAssignmentResponse {
+  submitted: boolean;
+  scorePct: number;
+  /** Concept names (teaching order) answered wrong; no answer text ever leaves the server. */
+  topicsToReview: string[];
 }
 
 /** POST /signals - a single learning signal emitted by the student app. */
