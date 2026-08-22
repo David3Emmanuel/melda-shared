@@ -37,6 +37,11 @@ export interface AdaptSectionInput {
     mode: AdaptationMode;
     /** How many students struggled, passed through so the copy can reference it. */
     strugglePct?: number;
+    /**
+     * Bodies of adaptations already saved for this section, so the model can vary
+     * rather than repeat an existing explanation. Names only - no ids.
+     */
+    priorAdaptations?: string[];
 }
 export interface AdaptationDraft {
     mode: AdaptationMode;
