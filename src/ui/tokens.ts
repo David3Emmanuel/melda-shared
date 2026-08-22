@@ -20,10 +20,10 @@ export const color = {
   inkMuted: '#5B6472',
   inkInverse: '#FFFFFF',
 
-  // brand
-  accent: '#4F46E5',
-  accentSoft: '#EEF0FE',
-  accentInk: '#3730A3',
+  // brand (accent decided 2026-08-22 — matches the design assets: #1439FF)
+  accent: '#1439FF',
+  accentSoft: '#E8ECFF',
+  accentInk: '#0F2FC4',
 
   // status (paired with labels in the UI)
   struggle: '#DC2626',
