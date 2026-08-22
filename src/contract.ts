@@ -61,6 +61,22 @@ export interface ClassCard {
   studentCount: number;
 }
 
+/** POST /classes - a teacher creates a class and owns it. */
+export interface CreateClassRequest {
+  name: string;
+  subject?: string;
+}
+
+/** The class just created, plus the invite code students use to join it. */
+export interface CreateClassResponse extends ClassCard {
+  inviteCode: string;
+}
+
+/** POST /classes/join - a student enrolls with a teacher-shared invite code. */
+export interface JoinClassRequest {
+  code: string;
+}
+
 // --- teacher reads (computed server-side via loadDataset + pure aggregation) --
 
 /**

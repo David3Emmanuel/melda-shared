@@ -7,7 +7,9 @@
 
 export type ID = string;
 
-export type Subject = 'Chemistry';
+// Any subject a teacher teaches (the MVP seed happens to be Chemistry). A string,
+// not an enum: the schema stores text and production teachers bring their own.
+export type Subject = string;
 
 export interface Student {
   id: ID;
