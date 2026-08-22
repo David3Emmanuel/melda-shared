@@ -54,15 +54,15 @@ export function Icon(props: { name: IconName; size?: number; color?: string }) {
 }
 
 // --- wordmark ----------------------------------------------------------------
-// The logo lockup (open-book mark + 'MELDA' lettering) as a vector, cropped to
-// its bounds so it scales tight. Aspect ~3.61:1.
+// The logo lockup (open-book mark + 'MELDA' lettering) at equal element heights,
+// as a vector cropped to its bounds so it scales tight. Aspect ~5.95:1.
 export function Wordmark(props: { width?: number }) {
   const { width = 200 } = props;
   return (
     <SvgXml
       xml={WORDMARK_XML.replace(/#1439FF/g, color.accent)}
       width={width}
-      height={Math.round(width / 3.61)}
+      height={Math.round(width / 5.95)}
     />
   );
 }
