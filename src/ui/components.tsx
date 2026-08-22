@@ -29,6 +29,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import { color, font, radius, sp, type Tone, toneStyle, weight } from './tokens';
 import { EMPTY_STATE_XML, ICON_XML, type EmptyStateArt, type IconName } from './icons';
+import { WORDMARK_XML } from './brand';
+
+// Brand artwork (wordmark + login/hero motifs) re-exported for the screens that
+// place them directly; the wordmark also gets a component below.
+export { HERO_SHAPE_XML, LOGIN_MOTIF_XML, WORDMARK_XML } from './brand';
 
 // react-native-web adds `hovered`/`focused` to the Pressable state at runtime,
 // but React Native's own type only declares `pressed`. Widen it here so screens
@@ -46,6 +51,20 @@ export function Icon(props: { name: IconName; size?: number; color?: string }) {
   const { name, size = 18, color: c = color.ink } = props;
   const xml = ICON_XML[name].replace(/#1439FF/g, c);
   return <SvgXml xml={xml} width={size} height={size} />;
+}
+
+// --- wordmark ----------------------------------------------------------------
+// The brand wordmark (custom "MELDA" lettering) as a vector, cropped to its text
+// bounds so it scales tight at any width. Aspect ~5.65:1.
+export function Wordmark(props: { width?: number }) {
+  const { width = 200 } = props;
+  return (
+    <SvgXml
+      xml={WORDMARK_XML.replace(/#1439FF/g, color.accent)}
+      width={width}
+      height={Math.round(width / 5.65)}
+    />
+  );
 }
 
 // --- text --------------------------------------------------------------------
