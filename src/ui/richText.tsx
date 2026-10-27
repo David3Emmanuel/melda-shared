@@ -20,11 +20,11 @@ import { SvgXml } from 'react-native-svg';
 import { color, sp, weight } from './tokens';
 import { Txt } from './components';
 import { parseBlocks, type Inline } from './richTextParse';
-import { texToSvg } from './richTextMath';
+import { texToImage } from './richTextMath';
 
 function MathSvg({ tex, display }: { tex: string; display: boolean }) {
-  const svg = useMemo(() => texToSvg(tex, display), [tex, display]);
-  if (!svg) {
+  const img = useMemo(() => texToImage(tex, display, 15, color.ink), [tex, display]);
+  if (!img) {
     // Last-resort: show the source so a broken formula is readable, never blank.
     return (
       <Txt variant="body" c={color.ink}>
@@ -34,8 +34,9 @@ function MathSvg({ tex, display }: { tex: string; display: boolean }) {
   }
   return (
     <SvgXml
-      xml={svg}
-      width="100%"
+      xml={img.svg}
+      width={img.width}
+      height={img.height}
       style={display ? { alignSelf: 'center', marginVertical: sp.sm } : undefined}
     />
   );

@@ -6,7 +6,7 @@
 // Run with `pnpm check:richtext` (tsx). No framework - assert + throw.
 
 import { parseBlocks, tokenizeInline } from './richTextParse';
-import { svgIsError, texToSvg } from './richTextMath';
+import { svgIsError, texToImage } from './richTextMath';
 
 let passed = 0;
 function ok(cond: boolean, msg: string): void {
@@ -126,15 +126,22 @@ console.log('richTextParse');
     ['greek', 'A = \\pi r^2', false],
   ];
   for (const [label, src, display] of cases) {
-    const svg = texToSvg(src, display);
-    ok(svg !== null, `${label} converts to SVG`);
-    ok(svg !== null && !svgIsError(svg), `${label} converts without a MathJax error`);
-    ok(
-      svg !== null && /<(path|rect|line|use|g)\b/.test(svg),
-      `${label} SVG carries drawn geometry`,
-    );
+    const img = texToImage(src, display);
+    ok(img !== null, `${label} converts to an image`);
+    if (!img) continue;
+    ok(!svgIsError(img.svg), `${label} converts without a MathJax error`);
+    ok(/<(path|rect|line|use|g)\b/.test(img.svg), `${label} SVG carries drawn geometry`);
+    ok(img.width > 0 && img.height > 0, `${label} has positive px dimensions`);
+    ok(Number.isInteger(img.width) && Number.isInteger(img.height), `${label} dimensions are integers`);
+    // The bug that would render math invisible: RN-SVG cannot parse `ex` units.
+    ok(!/\bwidth="[^"]*ex"/.test(img.svg), `${label} SVG drops the unparseable ex width`);
+    ok(!/\bheight="[^"]*ex"/.test(img.svg), `${label} SVG drops the unparseable ex height`);
+    ok(/viewBox="/.test(img.svg), `${label} SVG keeps its viewBox so it scales`);
+    ok(img.width <= 320, `${label} width is capped to the content column`);
+    // Unresolved currentColor paints nothing in react-native-svg -> invisible math.
+    ok(!/currentColor/.test(img.svg), `${label} SVG has no unresolved currentColor`);
   }
-  ok(texToSvg('', false) === null, 'empty TeX yields null (falls back, never blank)');
+  ok(texToImage('', false) === null, 'empty TeX yields null (falls back, never blank)');
 }
 
 console.log(`\nAll ${passed} assertions passed.`);
