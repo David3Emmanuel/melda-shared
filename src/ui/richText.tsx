@@ -58,6 +58,30 @@ function InlineRun({ run }: { run: Inline }) {
   );
 }
 
+// A paragraph that contains inline math must flow word-by-word: React Native
+// cannot wrap text around a non-text child, so one big <Txt> would push the math
+// onto its own line. Splitting into word runs lets the wrap row lay math inline.
+// Math-free paragraphs keep the cheaper whole-run rendering.
+function renderRuns(runs: Inline[]) {
+  const hasMath = runs.some((r) => r.kind === 'math');
+  if (!hasMath) {
+    return runs.map((run, k) => <InlineRun key={k} run={run} />);
+  }
+  const words: Inline[] = [];
+  for (const r of runs) {
+    if (r.kind !== 'text') {
+      words.push(r);
+      continue;
+    }
+    // Keep the separators so spacing between words survives.
+    for (const piece of r.value.split(/(\s+)/)) {
+      if (!piece) continue;
+      words.push({ kind: 'text', value: piece });
+    }
+  }
+  return words.map((run, k) => <InlineRun key={k} run={run} />);
+}
+
 /** Render one Markdown + LaTeX source string as rich text. */
 export function RichText(props: { children: string; style?: ViewStyle }) {
   const { children: src, style } = props;
@@ -84,10 +108,15 @@ export function RichText(props: { children: string; style?: ViewStyle }) {
                   <Txt variant="body" c={color.inkMuted}>
                     {'\u2022'}
                   </Txt>
-                  <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-                    {runs.map((run, k) => (
-                      <InlineRun key={k} run={run} />
-                    ))}
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {renderRuns(runs)}
                   </View>
                 </View>
               ))}
@@ -96,10 +125,11 @@ export function RichText(props: { children: string; style?: ViewStyle }) {
         }
 
         return (
-          <View key={i} style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {b.runs.map((run, k) => (
-              <InlineRun key={k} run={run} />
-            ))}
+          <View
+            key={i}
+            style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}
+          >
+            {renderRuns(b.runs)}
           </View>
         );
       })}
