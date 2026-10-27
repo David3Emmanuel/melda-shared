@@ -1,6 +1,6 @@
 {
   "name": "melda-shared",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "Shared domain models, insight aggregation, experience grading, the AI service interface, the deterministic demo seed, and the REST contract for MELDA.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -31,20 +31,22 @@
     "check:insights": "tsx src/domain/insights/insights.check.ts",
     "check:experience": "tsx src/domain/experience.check.ts",
     "check:ui": "tsx src/ui/tokens.check.ts",
-    "check": "pnpm check:insights && pnpm check:experience && pnpm check:ui",
+    "check:richtext": "tsx src/ui/richTextParse.check.ts",
+    "check": "pnpm check:insights && pnpm check:experience && pnpm check:ui && pnpm check:richtext",
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "mathjax-full": "^3.2.2",
     "prettier": "^3.9.6",
     "tsx": "^4.23.12",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
+    "mathjax-full": ">=3.2",
     "react": ">=19",
     "react-native": ">=0.81",
     "react-native-safe-area-context": ">=5",
-    "react-native-svg": ">=15",
-    "mathjax-full": ">=3.2"
+    "react-native-svg": ">=15"
   },
   "peerDependenciesMeta": {
     "react": {
