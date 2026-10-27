@@ -1,6 +1,6 @@
 {
   "name": "melda-shared",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "Shared domain models, insight aggregation, experience grading, the AI service interface, the deterministic demo seed, and the REST contract for MELDA.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -43,7 +43,8 @@
     "react": ">=19",
     "react-native": ">=0.81",
     "react-native-safe-area-context": ">=5",
-    "react-native-svg": ">=15"
+    "react-native-svg": ">=15",
+    "mathjax-full": ">=3.2"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -56,6 +57,9 @@
       "optional": true
     },
     "react-native-svg": {
+      "optional": true
+    },
+    "mathjax-full": {
       "optional": true
     }
   }

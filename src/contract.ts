@@ -59,6 +59,8 @@ export interface ClassCard {
   name: string;
   subject: Subject;
   studentCount: number;
+  /** The join code, present only on a teacher's own class (so they can re-share it). */
+  inviteCode?: string;
 }
 
 /** POST /classes - a teacher creates a class and owns it. */

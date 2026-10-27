@@ -35,6 +35,11 @@ import { WORDMARK_XML } from './brand';
 // place them directly; the wordmark also gets a component below.
 export { HERO_SHAPE_XML, LOGIN_MOTIF_XML, WORDMARK_XML } from './brand';
 
+// Rich text (Markdown + LaTeX math -> SVG) lives in its own file so the heavy
+// MathJax import only loads where a screen actually renders RichText; re-exported
+// here so both apps pull the whole kit from one import.
+export { RichText } from './richText';
+
 // react-native-web adds `hovered`/`focused` to the Pressable state at runtime,
 // but React Native's own type only declares `pressed`. Widen it here so screens
 // can read all three type-safely (they stay undefined on native).
